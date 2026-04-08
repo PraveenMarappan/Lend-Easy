@@ -131,11 +131,22 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         <div className="mx-auto max-w-[960px]">{children}</div>
       </main>
 
-      <footer className="border-t border-border px-6 py-4 text-center text-sm text-muted-foreground font-body">
-        <p className="font-semibold">LendEasy – Credit Decision System</p>
-        <p className="text-sm text-gray-600">Contact Developers:</p>
-        <p className="text-sm">praveenmarappan6@gmail.com</p>
-        <p className="text-sm">dr.muhilan2024@gmail.com</p>
+      <footer className="border-t border-border px-6 py-8 flex flex-col items-center font-body text-sm text-muted-foreground">
+        <p className="font-semibold text-foreground mb-6">LendEasy – Credit Decision System</p>
+        
+        <div className="w-full max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-4 rounded-lg border border-border shadow-sm bg-card flex flex-col items-center text-center transition-shadow hover:shadow-md">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Developer</span>
+            <p className="text-base font-medium text-foreground mb-1">Praveen Marappan</p>
+            <p className="text-sm">praveenmarappan6@gmail.com</p>
+          </div>
+
+          <div className="p-4 rounded-lg border border-border shadow-sm bg-card flex flex-col items-center text-center transition-shadow hover:shadow-md">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Developer</span>
+            <p className="text-base font-medium text-foreground mb-1">Muhilan M R</p>
+            <p className="text-sm">dr.muhilan2024@gmail.com</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
