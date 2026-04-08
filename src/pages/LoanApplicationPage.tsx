@@ -1,0 +1,111 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLoan, LoanData } from "@/context/LoanContext";
+
+const fields: { label: string; key: keyof LoanData; type: "text" | "number" }[] = [
+  { label: "Company Name", key: "companyName", type: "text" },
+  { label: "Applicant Name", key: "applicantName", type: "text" },
+  { label: "Industry Type", key: "industryType", type: "text" },
+  { label: "Annual Revenue (₹)", key: "annualRevenue", type: "number" },
+  { label: "Total Assets (₹)", key: "totalAssets", type: "number" },
+  { label: "Total Debt (₹)", key: "totalDebt", type: "number" },
+  { label: "Net Profit (₹)", key: "netProfit", type: "number" },
+  { label: "Existing Loan Amount (₹)", key: "existingLoanAmount", type: "number" },
+  { label: "Credit Score", key: "creditScore", type: "number" },
+];
+
+const defaults: LoanData = {
+  companyName: "",
+  applicantName: "",
+  industryType: "",
+  annualRevenue: 0,
+  totalAssets: 0,
+  totalDebt: 0,
+  netProfit: 0,
+  existingLoanAmount: 0,
+  creditScore: 0,
+};
+
+const LoanApplicationPage = () => {
+  const { setLoanData } = useLoan();
+  const navigate = useNavigate();
+  const [form, setForm] = useState<LoanData>(defaults);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (key: keyof LoanData, value: string) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: fields.find((f) => f.key === key)?.type === "number" ? Number(value) || 0 : value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    setLoanData(form);
+    setSubmitted(true);
+  };
+
+  const handleReset = () => {
+    setForm(defaults);
+    setSubmitted(false);
+  };
+
+  return (
+    <div>
+      <h1 className="font-heading text-3xl font-semibold text-foreground mb-2">Loan Application</h1>
+      <p className="text-muted-foreground font-body text-sm mb-8">
+        Enter the borrower's financial information below.
+      </p>
+
+      <div className="bg-card border border-border rounded-md p-6 md:p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {fields.map((f) => (
+            <div key={f.key} className="flex flex-col">
+              <label className="text-sm font-body font-medium text-muted-foreground mb-1.5">
+                {f.label}
+              </label>
+              <input
+                type={f.type}
+                value={f.type === "number" && form[f.key] === 0 ? "" : form[f.key]}
+                onChange={(e) => handleChange(f.key, e.target.value)}
+                placeholder={f.type === "number" ? "0" : `Enter ${f.label.toLowerCase()}`}
+                className="bg-background border border-border rounded-md px-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+          ))}
+        </div>
+
+        {submitted && (
+          <p className="mt-6 text-primary font-body text-sm font-medium">
+            ✓ Application data submitted successfully.
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-4 mt-8">
+          <button
+            onClick={handleSubmit}
+            className="bg-primary text-primary-foreground font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#218838] transition-colors"
+          >
+            Submit Application
+          </button>
+          <button
+            onClick={handleReset}
+            className="bg-secondary text-secondary-foreground font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors"
+          >
+            Reset Form
+          </button>
+          <button
+            onClick={() => {
+              if (!submitted) handleSubmit();
+              navigate("/workflow-pipeline");
+            }}
+            className="bg-card text-foreground border border-border font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors"
+          >
+            Proceed to Workflow Pipeline
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoanApplicationPage;
