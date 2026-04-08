@@ -33,22 +33,49 @@ const LoanApplicationPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState<LoanData>(defaults);
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   const handleChange = (key: keyof LoanData, value: string) => {
     setForm((prev) => ({
       ...prev,
       [key]: fields.find((f) => f.key === key)?.type === "number" ? Number(value) || 0 : value,
     }));
+    if (errors[key]) {
+      setErrors((prev) => ({ ...prev, [key]: false }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, boolean> = {};
+    let isValid = true;
+    for (const f of fields) {
+      if (f.type === "text" && !form[f.key]) {
+        newErrors[f.key] = true;
+        isValid = false;
+      } else if (f.type === "number" && (form[f.key] === 0 || form[f.key] === "")) {
+        newErrors[f.key] = true;
+        isValid = false;
+      }
+    }
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = () => {
-    setLoanData(form);
-    setSubmitted(true);
+    if (validateForm()) {
+      setLoanData(form);
+      setSubmitted(true);
+      return true;
+    } else {
+      toast.error("Please fill all required fields");
+      return false;
+    }
   };
 
   const handleReset = () => {
     setForm(defaults);
     setSubmitted(false);
+    setErrors({});
   };
 
   const handleMagicFill = () => {
@@ -63,6 +90,7 @@ const LoanApplicationPage = () => {
       existingLoanAmount: 5000000,
       creditScore: 782,
     });
+    setErrors({});
     toast.success("Demo data filled successfully.");
   };
 
@@ -96,8 +124,11 @@ const LoanApplicationPage = () => {
                 value={f.type === "number" && form[f.key] === 0 ? "" : form[f.key]}
                 onChange={(e) => handleChange(f.key, e.target.value)}
                 placeholder={f.type === "number" ? "0" : `Enter ${f.label.toLowerCase()}`}
-                className="bg-background border border-border rounded-md px-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                className={`bg-background border ${errors[f.key] ? "border-red-500 focus:ring-red-500" : "border-border focus:ring-primary"} rounded-md px-4 py-2.5 text-foreground font-body text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1`}
               />
+              {errors[f.key] && (
+                <span className="text-red-500 text-xs mt-1">This field is required</span>
+              )}
             </div>
           ))}
         </div>
@@ -120,8 +151,9 @@ const LoanApplicationPage = () => {
           <div className="flex-1 flex justify-center w-full">
             <button
               onClick={() => {
-                if (!submitted) handleSubmit();
-                navigate("/workflow-pipeline");
+                if (handleSubmit()) {
+                  navigate("/workflow-pipeline");
+                }
               }}
               className="bg-card text-foreground border border-border font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors"
             >
