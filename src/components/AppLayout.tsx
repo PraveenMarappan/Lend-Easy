@@ -49,8 +49,11 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
       </main>
 
       <footer className="border-t border-border px-6 py-4 text-center text-sm text-muted-foreground font-body">
-        Credit Decision Engine with CAM Generation
-      </footer>
+  <p className="font-semibold">LendEasy – Credit Decision System</p>
+  <p className="text-sm text-gray-600">Contact Developers:</p>
+  <p className="text-sm">praveenmarappan6@gmail.com</p>
+  <p className="text-sm">dr.muhilan2024@gmail.com</p>
+</footer>
     </div>
   );
 };
