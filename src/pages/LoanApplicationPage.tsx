@@ -108,28 +108,34 @@ const LoanApplicationPage = () => {
           </p>
         )}
 
-        <div className="flex flex-wrap gap-4 mt-8">
-          <button
-            onClick={handleSubmit}
-            className="bg-primary text-primary-foreground font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#218838] transition-colors"
-          >
-            Submit Application
-          </button>
-          <button
-            onClick={handleReset}
-            className="bg-secondary text-secondary-foreground font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors"
-          >
-            Reset Form
-          </button>
-          <button
-            onClick={() => {
-              if (!submitted) handleSubmit();
-              navigate("/workflow-pipeline");
-            }}
-            className="bg-card text-foreground border border-border font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors"
-          >
-            Proceed to Workflow Pipeline
-          </button>
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 w-full">
+          <div className="flex-1 flex justify-start w-full">
+            <button
+              onClick={handleSubmit}
+              className="bg-primary text-primary-foreground font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#218838] transition-colors"
+            >
+              Submit Application
+            </button>
+          </div>
+          <div className="flex-1 flex justify-center w-full">
+            <button
+              onClick={() => {
+                if (!submitted) handleSubmit();
+                navigate("/workflow-pipeline");
+              }}
+              className="bg-card text-foreground border border-border font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors"
+            >
+              Proceed to Workflow Pipeline
+            </button>
+          </div>
+          <div className="flex-1 flex justify-end w-full">
+            <button
+              onClick={handleReset}
+              className="bg-secondary text-secondary-foreground font-body font-medium py-2.5 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors"
+            >
+              Reset Form
+            </button>
+          </div>
         </div>
       </div>
     </div>
