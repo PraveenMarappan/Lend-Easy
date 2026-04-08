@@ -42,8 +42,14 @@ const HomePage = () => {
           Credit Decision
         </Link>
         <Link
+          to="/emi-calculator"
+          className="bg-card text-foreground border border-border font-body font-medium py-3.5 md:py-3 px-6 rounded-md hover:bg-[#DEE2E6] transition-colors text-center shadow-sm"
+        >
+          EMI Calculator
+        </Link>
+        <Link
           to="/cam-report"
-          className="sm:col-span-2 bg-primary text-primary-foreground font-body font-medium py-3.5 md:py-3 px-6 rounded-md hover:bg-[#218838] transition-colors text-center shadow-sm"
+          className="bg-primary text-primary-foreground font-body font-medium py-3.5 md:py-3 px-6 rounded-md hover:bg-[#218838] transition-colors text-center shadow-sm"
         >
           Generate CAM Report
         </Link>
