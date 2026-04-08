@@ -41,7 +41,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
             Lend Easy
           </Link>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <Link
             to="/loan-application"
@@ -49,7 +49,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           >
             Start New Application
           </Link>
-          <button 
+          <button
             className="md:hidden text-white p-2 hover:bg-gray-800 rounded-md transition-colors"
             onClick={() => setIsDrawerOpen(true)}
             aria-label="Open Menu"
@@ -65,11 +65,10 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
           <Link
             key={item.path}
             to={item.path}
-            className={`px-4 py-2 text-sm font-body rounded-md transition-colors whitespace-nowrap ${
-              location.pathname === item.path
+            className={`px-4 py-2 text-sm font-body rounded-md transition-colors whitespace-nowrap ${location.pathname === item.path
                 ? "text-primary font-medium"
                 : "text-gray-300 hover:text-[#42f56b]"
-            }`}
+              }`}
           >
             {item.label}
           </Link>
@@ -78,21 +77,20 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
 
       {/* Mobile Drawer Overlay */}
       {isDrawerOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/60 z-40 md:hidden transition-opacity"
           onClick={() => setIsDrawerOpen(false)}
         />
       )}
 
       {/* Mobile Drawer */}
-      <div 
-        className={`fixed top-0 left-0 w-64 h-full bg-[#000000] z-50 transform transition-transform duration-300 ease-in-out flex flex-col md:hidden ${
-          isDrawerOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+      <div
+        className={`fixed top-0 left-0 w-64 h-full bg-[#000000] z-50 transform transition-transform duration-300 ease-in-out flex flex-col md:hidden ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex justify-between items-center p-4 border-b border-[#222]">
           <span className="font-heading text-lg font-semibold text-white">Menu</span>
-          <button 
+          <button
             onClick={() => setIsDrawerOpen(false)}
             className="text-white p-2 hover:bg-gray-800 rounded-md transition-colors"
             aria-label="Close Menu"
@@ -100,7 +98,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
             <X size={24} />
           </button>
         </div>
-        
+
         <div className="flex flex-col p-4 overflow-y-auto flex-1">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -108,17 +106,16 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`py-3 px-4 mb-2 text-base font-body rounded-md transition-colors block ${
-                  isActive
+                className={`py-3 px-4 mb-2 text-base font-body rounded-md transition-colors block ${isActive
                     ? "text-[#28A745] bg-[#111] font-medium"
                     : "text-[#FFFFFF] hover:text-[#a3f7b5] hover:bg-[#111]"
-                }`}
+                  }`}
               >
                 {item.label}
               </Link>
             );
           })}
-          
+
           <div className="mt-8 border-t border-[#222] pt-6">
             <Link
               to="/loan-application"
@@ -136,7 +133,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
 
       <footer className="border-t border-border px-6 py-4 text-center text-sm text-muted-foreground font-body">
         <p className="font-semibold">LendEasy – Credit Decision System</p>
-        <p className="text-sm text-gray-600">Contact Developers:</p>
+        <p className="text-sm text-gray-600">Contact Developers::it</p>
         <p className="text-sm">praveenmarappan6@gmail.com</p>
         <p className="text-sm">dr.muhilan2024@gmail.com</p>
       </footer>
