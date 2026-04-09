@@ -29,10 +29,10 @@ const defaults: LoanData = {
 };
 
 const LoanApplicationPage = () => {
-  const { setLoanData } = useLoan();
+  const { loanData, setLoanData, resetAll } = useLoan();
   const navigate = useNavigate();
-  const [form, setForm] = useState<LoanData>(defaults);
-  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState<LoanData>(loanData || defaults);
+  const [submitted, setSubmitted] = useState(!!loanData);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   const handleChange = (key: keyof LoanData, value: string) => {
@@ -73,6 +73,7 @@ const LoanApplicationPage = () => {
   };
 
   const handleReset = () => {
+    resetAll();
     setForm(defaults);
     setSubmitted(false);
     setErrors({});

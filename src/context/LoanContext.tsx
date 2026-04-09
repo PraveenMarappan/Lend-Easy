@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface LoanData {
   companyName: string;
@@ -55,10 +55,41 @@ const defaultSteps: PipelineStep[] = [
 const LoanContext = createContext<LoanContextType | undefined>(undefined);
 
 export const LoanProvider = ({ children }: { children: ReactNode }) => {
-  const [loanData, setLoanData] = useState<LoanData | null>(null);
-  const [ratios, setRatios] = useState<FinancialRatios | null>(null);
-  const [decision, setDecision] = useState<CreditDecision | null>(null);
-  const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>(defaultSteps);
+  const [loanData, setLoanData] = useState<LoanData | null>(() => {
+    const saved = sessionStorage.getItem("loanData");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [ratios, setRatios] = useState<FinancialRatios | null>(() => {
+    const saved = sessionStorage.getItem("ratios");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [decision, setDecision] = useState<CreditDecision | null>(() => {
+    const saved = sessionStorage.getItem("decision");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>(() => {
+    const saved = sessionStorage.getItem("pipelineSteps");
+    return saved ? JSON.parse(saved) : defaultSteps;
+  });
+
+  useEffect(() => {
+    if (loanData) sessionStorage.setItem("loanData", JSON.stringify(loanData));
+    else sessionStorage.removeItem("loanData");
+  }, [loanData]);
+
+  useEffect(() => {
+    if (ratios) sessionStorage.setItem("ratios", JSON.stringify(ratios));
+    else sessionStorage.removeItem("ratios");
+  }, [ratios]);
+
+  useEffect(() => {
+    if (decision) sessionStorage.setItem("decision", JSON.stringify(decision));
+    else sessionStorage.removeItem("decision");
+  }, [decision]);
+
+  useEffect(() => {
+    sessionStorage.setItem("pipelineSteps", JSON.stringify(pipelineSteps));
+  }, [pipelineSteps]);
 
   const calculateRatios = () => {
     if (!loanData) return null;
@@ -112,6 +143,11 @@ export const LoanProvider = ({ children }: { children: ReactNode }) => {
     setRatios(null);
     setDecision(null);
     setPipelineSteps(defaultSteps);
+    sessionStorage.removeItem("loanData");
+    sessionStorage.removeItem("ratios");
+    sessionStorage.removeItem("decision");
+    sessionStorage.removeItem("pipelineSteps");
+    sessionStorage.clear();
   };
 
   return (

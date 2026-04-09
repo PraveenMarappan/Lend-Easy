@@ -128,6 +128,7 @@ const CAMReportPage = () => {
 
     const fileName = `CAM_Report_${loanData.companyName.replace(/\s+/g, "_")}.pdf`;
     doc.save(fileName);
+    sessionStorage.clear();
   };
 
   if (!isReady) {
