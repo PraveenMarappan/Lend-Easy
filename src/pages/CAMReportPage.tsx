@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useLoan } from "@/context/LoanContext";
 import { formatINR } from "@/lib/format";
-
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-8">
     <h2 className="font-heading text-xl font-semibold text-primary mb-4 pb-2 border-b border-border">{title}</h2>
@@ -26,44 +27,107 @@ const CAMReportPage = () => {
 
   const handleDownload = () => {
     if (!isReady) return;
-    const content = `
-CREDIT APPRAISAL MEMO
-=====================
 
-1. BORROWER PROFILE
-Company: ${loanData.companyName}
-Applicant: ${loanData.applicantName}
-Industry: ${loanData.industryType}
+    const formatCurrency = (num: number | string) => {
+      return "Rs. " + Number(num).toLocaleString("en-IN");
+    };
+    
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("LendEasy \u2013 Credit Appraisal Memo (CAM Report)", pageWidth / 2, 20, { align: "center" });
+    
+    let currentY = 35;
 
-2. FINANCIAL SUMMARY
-Annual Revenue: ${formatINR(loanData.annualRevenue)}
-Total Assets: ${formatINR(loanData.totalAssets)}
-Total Debt: ${formatINR(loanData.totalDebt)}
-Net Profit: ${formatINR(loanData.netProfit)}
+    doc.setFontSize(14);
+    doc.text("1. Borrower Profile", 14, currentY);
+    autoTable(doc, {
+      startY: currentY + 5,
+      head: [],
+      body: [
+        ["Company", loanData.companyName],
+        ["Applicant", loanData.applicantName],
+        ["Industry", loanData.industryType],
+      ],
+      theme: "grid",
+      styles: { font: "helvetica", fontSize: 10 },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 80 } }
+    });
+    currentY = (doc as any).lastAutoTable.finalY + 15;
 
-3. FINANCIAL RATIOS
-Debt to Equity: ${ratios.debtToEquity.toFixed(2)}
-Profit Margin: ${(ratios.profitMargin * 100).toFixed(1)}%
-Loan Exposure: ${ratios.loanExposure.toFixed(2)}
+    doc.setFontSize(14);
+    doc.text("2. Financial Summary", 14, currentY);
+    autoTable(doc, {
+      startY: currentY + 5,
+      head: [],
+      body: [
+        ["Annual Revenue", formatCurrency(loanData.annualRevenue)],
+        ["Total Assets", formatCurrency(loanData.totalAssets)],
+        ["Total Debt", formatCurrency(loanData.totalDebt)],
+        ["Net Profit", formatCurrency(loanData.netProfit)],
+      ],
+      theme: "grid",
+      styles: { font: "helvetica", fontSize: 10 },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 80 } }
+    });
+    currentY = (doc as any).lastAutoTable.finalY + 15;
 
-4. RISK ASSESSMENT
-Credit Score: ${loanData.creditScore}
-Risk Score: ${decision.riskScore}
-Risk Category: ${decision.riskLevel}
+    doc.setFontSize(14);
+    doc.text("3. Financial Ratio Analysis", 14, currentY);
+    autoTable(doc, {
+      startY: currentY + 5,
+      head: [],
+      body: [
+        ["Debt to Equity Ratio", ratios.debtToEquity.toFixed(2)],
+        ["Profit Margin", `${(ratios.profitMargin * 100).toFixed(1)}%`],
+        ["Loan Exposure Ratio", ratios.loanExposure.toFixed(2)],
+      ],
+      theme: "grid",
+      styles: { font: "helvetica", fontSize: 10 },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 80 } }
+    });
+    currentY = (doc as any).lastAutoTable.finalY + 15;
 
-5. LENDING RECOMMENDATION
-Status: ${decision.status}
-Approved Credit Limit: ${formatINR(decision.recommendedLimit)}
-Interest Rate: ${decision.interestRate}%
-    `.trim();
+    doc.setFontSize(14);
+    doc.text("4. Risk Assessment", 14, currentY);
+    autoTable(doc, {
+      startY: currentY + 5,
+      head: [],
+      body: [
+        ["Credit Score", loanData.creditScore.toString()],
+        ["Risk Score", decision.riskScore.toString()],
+        ["Risk Category", decision.riskLevel],
+      ],
+      theme: "grid",
+      styles: { font: "helvetica", fontSize: 10 },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 80 } }
+    });
+    currentY = (doc as any).lastAutoTable.finalY + 15;
 
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `CAM_Report_${loanData.companyName.replace(/\s+/g, "_")}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (currentY > 240) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setFontSize(14);
+    doc.text("5. Lending Recommendation", 14, currentY);
+    autoTable(doc, {
+      startY: currentY + 5,
+      head: [],
+      body: [
+        ["Loan Status", decision.status],
+        ["Approved Credit Limit", formatCurrency(decision.recommendedLimit)],
+        ["Interest Rate", `${decision.interestRate}%`],
+      ],
+      theme: "grid",
+      styles: { font: "helvetica", fontSize: 10 },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 80 } }
+    });
+
+    const fileName = `CAM_Report_${loanData.companyName.replace(/\s+/g, "_")}.pdf`;
+    doc.save(fileName);
   };
 
   if (!isReady) {
